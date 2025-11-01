@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#B3000000"  <!-- semi-transparent black -->
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/overlayTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:maxWidth="220dp"
+        android:text="(no task)" />
+
+    <TextView
+        android:id="@+id/overlayTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#DDDDDD"
+        android:textSize="12sp"
+        android:layout_marginTop="4dp"
+        android:text="--:--" />
+
+</LinearLayout>

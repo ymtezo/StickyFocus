@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ロック解除時のタスク入力"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/taskEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="今からするタスク" />
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="保存してオーバーレイ表示" 
+        android:layout_marginTop="12dp"/>
+
+    <Button
+        android:id="@+id/shareButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="共有" 
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/overlayPermissionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="オーバーレイ許可を開く" 
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>
