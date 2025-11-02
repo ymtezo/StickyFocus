@@ -131,11 +131,29 @@ class OverlayService : Service() {
 
     private fun updateOverlay() {
         overlayView ?: return
-        val prefs = getSharedPreferences(MainActivity.PREFS, Context.MODE_PRIVATE)
-        val task = prefs.getString(MainActivity.KEY_LATEST_TASK, "") ?: ""
         val tvTask = overlayView!!.findViewById<TextView>(R.id.overlayTask)
         val tvTime = overlayView!!.findViewById<TextView>(R.id.overlayTime)
-        tvTask.text = task
+
+        // Update time immediately
         tvTime.text = java.text.SimpleDateFormat("HH:mm:ss").format(java.util.Date())
+
+        // Fetch latest task from Room in background
+        java.util.concurrent.Executors.newSingleThreadExecutor().execute {
+            try {
+                val db = AppDatabase.getInstance(applicationContext)
+                val latest = db.taskDao().getLatestPinnedOrLatest()
+                val text = latest?.title ?: ""
+                handler.post {
+                    tvTask.text = text
+                }
+            } catch (e: Exception) {
+                // fallback to prefs
+                val prefs = getSharedPreferences(MainActivity.PREFS, Context.MODE_PRIVATE)
+                val task = prefs.getString(MainActivity.KEY_LATEST_TASK, "") ?: ""
+                handler.post {
+                    tvTask.text = task
+                }
+            }
+        }
     }
 }

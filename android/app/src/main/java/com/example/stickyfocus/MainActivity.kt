@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.UUID
+import java.util.concurrent.Executors
 import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
@@ -37,7 +39,27 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "タスクを入力してください", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            // Save to SharedPreferences (backwards-compatible)
             prefs.edit().putString(KEY_LATEST_TASK, task).apply()
+
+            // Save to Room DB (background)
+            val executor = Executors.newSingleThreadExecutor()
+            executor.execute {
+                try {
+                    val db = AppDatabase.getInstance(applicationContext)
+                    val now = System.currentTimeMillis()
+                    val entity = TaskEntity(
+                        id = UUID.randomUUID().toString(),
+                        title = task,
+                        createdAt = now,
+                        updatedAt = now,
+                        source = "unlock_input"
+                    )
+                    db.taskDao().insert(entity)
+                } catch (e: Exception) {
+                    // ignore
+                }
+            }
 
             // Start overlay service
             val overlayIntent = Intent(this, OverlayService::class.java)
