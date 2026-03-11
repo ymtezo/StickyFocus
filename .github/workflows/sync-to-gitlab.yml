@@ -4,6 +4,7 @@ on:
   push:
     branches: ["*"]
     tags: ["*"]
+  workflow_dispatch:
 
 jobs:
   sync:
@@ -14,28 +15,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Git
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-
-      - name: Push all branches and tags to GitLab
+      - name: Sync to GitLab
+        shell: bash
         env:
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
           GITLAB_REPO: ${{ secrets.GITLAB_REPO }}
         run: |
           git remote remove gitlab 2>/dev/null || true
-          
-          # GitLab縺ｮ隱崎ｨｼURL繧剃ｽ懈・
-          AUTH_URL="https://oauth2:${GITLAB_TOKEN}@${GITLAB_REPO#https://}"
-          
-          # 蜈ｨ縺ｦ縺ｮ繝ｪ繝｢繝ｼ繝郁ｿｽ霍｡繝悶Λ繝ｳ繝√ｒ繝ｭ繝ｼ繧ｫ繝ｫ繝悶Λ繝ｳ繝√↓縺吶ｋ・・rigin/xxx -> xxx・・
-          # 窶ｻ縺薙ｌ縺ｫ繧医ｊrefs/remotes/origin/* 縺碁∽ｿ｡諡貞凄縺輔ｌ繧九お繝ｩ繝ｼ繧貞屓驕ｿ
-          git branch -r | grep -v '\->' | while read remote; do
+          CLEAN_URL=$(echo "$GITLAB_REPO" | sed 's|https://||')
+          AUTH_URL="https://oauth2:${GITLAB_TOKEN}@${CLEAN_URL}"
+          git branch -r | grep -v '\->' | while read -r remote; do
             branch="${remote#origin/}"
             git branch -f "$branch" "$remote" 2>/dev/null || true
           done
-          
-          # 蜈ｨ繝悶Λ繝ｳ繝√→繧ｿ繧ｰ繧貞ｼｷ蛻ｶ繝励ャ繧ｷ繝･
           git push --all --force "$AUTH_URL"
           git push --tags --force "$AUTH_URL"
